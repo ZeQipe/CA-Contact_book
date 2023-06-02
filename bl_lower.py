@@ -24,33 +24,50 @@ def input_com_book():
         var = input(f'{blu.ti_and_you()} > ')
         if var == 'stop':
             return False
-        if var == 'open':
+        elif var == 'open':
             pass
-        if var == 'now':
+        elif var == 'now':
+            print(f'{blu.ti_and_inf()} Введите имя адресной книги:')
+            name = input(f'{blu.ti_and_you()} > ')
+            if name == 'stop':
+                return False
+            else:
+                create_book(name)
+        elif var == 'del':
             pass
-        if var == 'del':
-            pass
-        if var == 'list':
+        elif var == 'list':
             list_books()
+        elif var == 'help':
+            blu.book_com_info()
         else:
             print(f'{blu.ti_and_war()} Такой команды не обнаружено')
 
 
+def directions(name):
+    return os.path.join('books', name)
+
+
 def list_books():
-    books = os.listdir(r'D:\Обучение\Проекты\contact_book\book')
-    if not books:
-        print(f'{blu.ti_and_war()} Адресные книги отсутсвуют\n'
-              f'                    Выберите следующее действие (help - Вывести команды):')
+    if os.path.exists('books'):
+        books = os.listdir(r'books')
+        if not books:
+            print(f'{blu.ti_and_war()} Адресные книги отсутсвуют\n'
+                  f'                    Выберите следующее действие (help - Вывести команды):')
+        else:
+            lst = "\n                    - ".join(books)
+            print(f'{blu.ti_and_inf()} Список доступных книг:\n'
+                  f'                    - {lst}\n'
+                  f'                    Выберите следующее действие (help - Вывести команды):')
     else:
-        lst = "\n                    - ".join(books)
-        print(f'{blu.ti_and_inf()} Список доступных книг:\n'
-              f'                    - {lst}\n'
-              f'                    Выберите следующее действие (help - Вывести команды):')
-
-
+        os.mkdir('books')
+        list_books()
 
 def create_book(name):  # Готов
-    file = open(name, 'a')
-    file.write('')
-    file.close()
-    print(t_now(), '    INFO:    ', 'Адресная книга создана и выбрана')  # уведомим об успехе
+    book_dir = directions(name)
+    if not os.path.exists(book_dir):
+        file = open(directions(name), 'a')
+        file.write('')
+        file.close()
+        print(blu.ti_and_inf(), ' Адресная книга создана! Что дальше?')  # уведомим об успехе
+    else:
+        print(blu.ti_and_war(),' Такая адресная книга уже есть! Следующее действие?')
