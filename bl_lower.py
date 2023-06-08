@@ -20,7 +20,7 @@ def t_now():
 
 # Вывод директории для контактных книг
 def directions(name):
-    return os.path.join('books', name)
+    return os.path.join('books', name + '.data')
 
 
 # проверка на наличие файла
@@ -41,11 +41,21 @@ def list_books():
     books = os.listdir(r'books')
     if not books:
         print(f'{blu.ti_and_war()} Адресные книги отсутсвуют')
+        return False
     else:
-        lst = "\n                    - ".join(books)
+        books_correct = name_correct(books)
+        lst = "\n                    - ".join(books_correct)
         print(f'{blu.ti_and_inf()} Список доступных книг:\n'
               f'                    - {lst}')
-    blu.reminder()
+        return True
+
+
+# Удаление .data из имени файла
+def name_correct(lst):
+    lst_result = []
+    for i in lst:
+        lst_result.append(i.replace('.data', ''))
+    return lst_result
 
 
 # создание контактной книги
@@ -65,8 +75,7 @@ def del_book(name):
         os.remove(directions(name))
         print(f'{blu.ti_and_inf()} Файл успешно удалён!')  # уведомим об успехе
     else:
-        print(f'{blu.ti_and_war()} Такой адресной книги не существует!')
-        blu.reminder()
+        print(f'{blu.ti_and_war()} Адресная книга, с именем {name}, не обнаружено!')
 
 
 # Открытие контактной книги
@@ -100,24 +109,26 @@ def open_books(name):
 # Рализация добавления контакта в адресную книгу
 def add_contact(name):
     contact = []
-    print(f'{blu.ti_and_inf()} Введите ИМЯ')
+    print(f'{blu.ti_and_inf()} Введите параметры пользователя,\n'
+          f'                    break - Отменить добавление контакта\n'
+          f'                    Введите ИМЯ')
     names = input_contact_info()
-    if names == 'stop' or names == 'back':
+    if names == 'stop' or names == 'break':
         return names
     contact.append(names)
     print(f'{blu.ti_and_inf()} Введите ФАМИЛИЮ')
     surnames = input_contact_info()
-    if surnames == 'stop' or surnames == 'back':
+    if surnames == 'stop' or surnames == 'break':
         return surnames
     contact.append(surnames)
     print(f'{blu.ti_and_inf()} Введите НОМЕР')
     number = input_contact_info()
-    if number == 'stop' or number == 'back':
+    if number == 'stop' or number == 'break':
         return number
     contact.append(number)
     print(f'{blu.ti_and_inf()} Введите ПОЧТОВЫЙ АДРЕС')
     email = input_contact_info()
-    if email == 'stop' or email == 'back':
+    if email == 'stop' or email == 'break':
         return email
     contact.append(email + ' \n')
     file = open(directions(name), 'a+')
@@ -126,11 +137,16 @@ def add_contact(name):
     print(f'{blu.ti_and_inf()} Контакт успешно записан')
 
 
+# Проверка ввода на отсутствие пробелов, для исключения лишних данных
 def input_contact_info():
     while True:
         buff = input(f'{blu.ti_and_you()} > ')
         if ' ' in buff:
-            print(f'{blu.ti_and_war()} Введите без пробелов:')
+            print(f'{blu.ti_and_war()} Введите без пробелов:\n'
+                  f'                    break - Отменить добавление контакта')
+        elif buff == '':
+            print(f'{blu.ti_and_war()} Нельзя оставить поле пустым, введите значение!\n'
+                  f'                    break - Отменить добавление контакта')
         else:
             return buff
 
@@ -152,30 +168,30 @@ def option_del(name, target):
     print(f'{blu.ti_and_inf()} Вот что удалось обнаружить:')
     for i in range(len(check)):
         print(f'                    {i + 1}) {" ".join(check[i])}', end='')
-    print(f'\n{blu.ti_and_inf()} Удалить все вхождения контакта (all) или конкретный (one)? '
-          f'back - Отменить удаление')
+    print(f'\n{blu.ti_and_inf()} Удалить все вхождения контакта (all) или конкретный (one)?\n'
+          f'                    break - Отменить удаление')
     while True:
         opt = input(f'{blu.ti_and_you()} > ')
-        if opt == 'stop' or opt == 'back':
+        if opt == 'stop' or opt == 'break':
             return opt
         elif opt == 'all':
             del_all_target(name, target)
             return
         elif opt == 'one':
             buff = search_del_cont(name, target, check)
-            if buff == 'stop' or buff == 'back':
+            if buff == 'stop' or buff == 'break':
                 return buff
             return
         else:
             print(f'{blu.ti_and_war()} Такая команда не обнаружена в этом меню\n'
-                  f'                    Введите "all" или "one", "back" - отменить удаление:')
+                  f'                    Введите "all" или "one", "break" - отменить удаление:')
 
 
 def search_del_cont(name, target, check):
     print(f'{blu.ti_and_inf()} Введите номер контакта, который надо удалить:')
     while True:
         index_target = input(f'{blu.ti_and_you()} > ')
-        if index_target == 'stop' or index_target == 'back':
+        if index_target == 'stop' or index_target == 'break':
             return index_target
         elif index_target.isdigit():
             index_target = int(index_target)
@@ -183,7 +199,8 @@ def search_del_cont(name, target, check):
                 del check[index_target - 1]
                 break
             else:
-                print(f'{blu.ti_and_war()} Не правильный порядковый номер, попробуйте еще раз')
+                print(f'{blu.ti_and_war()} Не правильный порядковый номер, попробуйте еще раз\n'
+                      f'                    break - Отменить удаление контакта')
         else:
             print(f'{blu.ti_and_war()} Введите число, пожалуйста.')
     write_after_del(name, del_index_target(name, check, target))
@@ -232,9 +249,10 @@ def write_after_del(name, lst):
 # Реализация поиска контакта
 def ser_contact(name):
     while True:
-        print(f'{blu.ti_and_inf()} Введите ИМЯ или ФАМИЛИЮ для поиска контакта')
+        print(f'{blu.ti_and_inf()} Введите ИМЯ или ФАМИЛИЮ для поиска контакта\n'
+              f'                    break - Отменить поиск контакта')
         target = input(f'{blu.ti_and_you()} >')
-        if target == 'stop' or target == 'back':
+        if target == 'stop' or target == 'break':
             return target
         check = list(filter(lambda x: target in x, read_cont(name)))
         if check:
@@ -243,14 +261,15 @@ def ser_contact(name):
             blu.reminder()
             return
         else:
-            print(f'{blu.ti_and_war()} Совпадений не найдено, повторить с другим именем? (y/n)')
+            print(f'{blu.ti_and_war()} Совпадений не найдено, повторить с другим именем? (y/n)\n'
+                  f'                    break - Отменить поиск контакта')
             while True:
                 var = input(f'{blu.ti_and_you()} >')
                 if var == 'y':
                     break
                 elif var == 'n':
                     return
-                elif var == 'stop' or var == 'back':
+                elif var == 'stop' or var == 'break':
                     return var
                 else:
                     print(f'{blu.ti_and_war()} Введите "y" или "n"')
@@ -281,7 +300,7 @@ def red_contact(name, target):
     print(f'{blu.ti_and_inf()} Введите поряковый номер контакта, который необходимо изменить:')
     while True:
         index_target = input(f'{blu.ti_and_you()} > ')
-        if index_target == 'stop' or index_target == 'back':
+        if index_target == 'stop' or index_target == 'break':
             return index_target
         elif index_target.isdigit():
             index_target = int(index_target)
@@ -289,7 +308,7 @@ def red_contact(name, target):
                 lst = read_cont(name)
                 index = lst.index(check[index_target - 1])
                 buff = redact_cont(check[index_target - 1])
-                if buff == 'stop' or buff == 'back':
+                if buff == 'stop' or buff == 'break':
                     return buff
                 lst[index] = buff
                 file = open(directions(name), 'w')
@@ -300,7 +319,8 @@ def red_contact(name, target):
                 blu.reminder()
                 break
             else:
-                print(f'{blu.ti_and_war()} Не правильный порядковый номер, попробуйте еще раз')
+                print(f'{blu.ti_and_war()} Не правильный порядковый номер, попробуйте еще раз\n'
+                      f'                    break - Отменить редактирование')
         else:
             print(f'{blu.ti_and_war()} Введите число, пожалуйста.')
 
@@ -313,7 +333,7 @@ def redact_cont(contact):
           f'                    Имя (name), Фамилию (sur), Номер (num), Почтовый адрес (mail):')
     while True:
         var = input(f'{blu.ti_and_you()} > ')
-        if var == 'stop' or var == 'back':
+        if var == 'stop' or var == 'break':
             return var
         elif var == 'name':
             return opt_red(contact, 0)
@@ -324,13 +344,14 @@ def redact_cont(contact):
         elif var == 'mail':
             return opt_red(contact, 3)
         else:
-            print(f'{blu.ti_and_war()} Выберите какой параметр изменить или back что бы отменить редактирование')
+            print(f'{blu.ti_and_war()} Выберите какой параметр изменить\n'
+                  f'                    break что бы отменить редактирование')
 
 
 def opt_red(contact, val):
     print(f'{blu.ti_and_inf()} Введите новое значение:')
     buff = input(f'{blu.ti_and_you()} > ')
-    if buff == 'stop' or buff == 'back':
+    if buff == 'stop' or buff == 'break':
         return buff
     contact[val] = buff
     return contact
@@ -341,62 +362,50 @@ def convert_opt(name):
     print(f'{blu.ti_and_inf()} В какой формат конвертировать файл? (vcf / csv)')
     while True:
         var = input(f'{blu.ti_and_you()} > ')
-        if var == 'stop' or var == 'back':
+        if var == 'stop' or var == 'break':
             return var
         elif var == 'vcf':
             convert_vcf(name, var)
+            return
         elif var == 'csv':
             convert_csv(name, var)
+            return
         else:
-            print(f'{blu.ti_and_war()} Выберите формат vcf или csv, back - отменить конвертацию')
+            print(f'{blu.ti_and_war()} Выберите формат vcf или csv\n'
+                  f'                    break - отменить конвертацию')
 
 
 def directions_convert(name, form):
     return os.path.join('Convert Books', name + f'.{form}')
 
 
-def exists_file_convert(name, form):
+def exists_file_convert(name='', form=''):
     if os.path.exists('Convert Books'):
         return directions_convert(name, form)
     else:
         os.mkdir('Convert Books')
-        return directions_convert(name, form)
+        return exists_file_convert()
 
 
+# Функция конвертация в VCF формат
 def convert_vcf(name, form):
-    c_name = exists_file_convert(name, form)
+    exists_file_convert(name, form)
     lst = read_cont(name)
-    file = open(c_name, 'w')
+    file = open(directions_convert(name, form), 'w')
     for i in lst:
         file.write(f'BEGIN:VCARD\nVERSION:3.0\nN:{i[1]};{i[0]};;;\nFN: {i[0]} {i[1]}\nTEL;Type=CELL:{i[2]}'
                    f'\nEMAIL;Type=WORK:{i[3]}END:VCARD\n')
     file.close()
     print(f'{blu.ti_and_inf()} Контактная книга успешно конвертирована!')
-    blu.reminder()
 
 
+# Функция конвертация в CSV формат
 def convert_csv(name, form):
-    c_name = exists_file_convert(name, form)
+    exists_file_convert(name, form)
     lst = read_cont(name)
-    file = open(c_name, 'w', encoding='utf-8')
+    file = open(directions_convert(name, form), 'w', encoding='utf-8')
     file.write('ИМЯ И ФАМИЛИЯ;НОМЕР ТЕЛЕФОНА;EMAIL АДРЕСС;\n')
     for i in lst:
         file.write(f'{i[0]} {i[1]};{i[2]};{i[3]}')
     file.close()
     print(f'{blu.ti_and_inf()} Контактная книга успешно конвертирована!')
-    blu.reminder()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

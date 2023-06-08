@@ -6,15 +6,18 @@ from bl_lower import *
 
 
 def ti_and_inf():
-    return f'{t_now()}    INFO:  '
+    text = '\033[32m Info\033[0m'
+    return f'\033[33m{t_now()}\033[0m   ' + text + ':  '
 
 
 def ti_and_war():
-    return f'{t_now()}   Error:  '
+    text = '\033[31m Error\033[0m'
+    return f'\033[33m{t_now()}\033[0m  ' + text + ':  '
 
 
 def ti_and_you():
-    return f'{t_now()}    YOUR:  '
+    text = '\033[34m Your\033[0m'
+    return f'\033[33m{t_now()}\033[0m   ' + text + ':  '
 
 
 """
@@ -61,7 +64,7 @@ def contact_com_info():
 
 
 """
-Работа с адресной книгой.
+Работа с адресными книгами.
 """
 
 
@@ -89,6 +92,8 @@ def input_com_book(var):
         name = input(f'{ti_and_you()} > ')
         if name == 'stop':
             return name
+        elif name == 'break':
+            return
         buff = open_books(name)
         if buff == 'stop':
             return buff
@@ -96,29 +101,53 @@ def input_com_book(var):
             return name
 
     elif var == 'now':
-        print(f'{ti_and_inf()} Введите имя адресной книги:')
+        print(f'{ti_and_inf()} Введите имя адресной книги:\n'
+              f'                    break - отменить создание адресной книги')
         name = input(f'{ti_and_you()} > ')
         if name == 'stop':
             return name
+        elif name == 'break':
+            print(f'{ti_and_inf()} Вы отменили добавление адресной книги!')
+            reminder()
+            return
         else:
             create_book(name)
 
     elif var == 'rem':
-        print(f'{ti_and_inf()} Введите имя адресной книги:')
-        name = input(f'{ti_and_you()} > ')
-        if name == 'stop':
-            return name
+        if list_books():
+            print(f'{ti_and_inf()} Введите имя адресной книги, которую надо удалить:\n'
+                  f'                    break - Отменить удаление!')
+            name = input(f'{ti_and_you()} > ')
+            if name + '.data' in os.listdir(r'books'):
+                del_book(name)
+                reminder()
+            elif name == 'stop':
+                return name
+            elif name == 'break':
+                print(f'{ti_and_inf()} Вы отменили удаление адресной книги!')
+                reminder()
+                return
+            elif name == '':
+                print(f"{ti_and_war()} Вы не ввели имя адресной книги, попробуйте еще раз!")
+                reminder()
+                return
+            else:
+                del_book(name)
+                reminder()
         else:
-            del_book(name)
+            reminder()
 
     elif var == 'list':
         list_books()
+        reminder()
 
     elif var == 'help':
         book_com_info()
 
     elif var == 'book':
+        exists_file_convert()
         os.system(r"explorer.exe Convert Books")
+        reminder()
 
     else:
         print(f'{ti_and_war()} Такой команды не обнаружено')
@@ -140,6 +169,8 @@ def contact(name_book):
             return False
         elif result_c == 'rep':
             return True
+        elif result_c == 'change':
+            return result_c
 
 
 def input_com_contact(name_book, var):
@@ -150,17 +181,21 @@ def input_com_contact(name_book, var):
         buff = add_contact(name_book)
         if buff == 'stop':
             return buff
-        elif buff == 'back':
+        elif buff == 'break':
             print(f'{ti_and_inf()} Вы отменили добавление контакта')
             blu.reminder()
             return
         blu.reminder()
 
     elif var == 'del':
+        if not read_cont(name_book):
+            print(f'{ti_and_war()} Список контактов пуст!')
+            reminder()
+            return
         target = input_target()
         if target == 'stop':
             return target
-        elif target == 'back':
+        elif target == 'break':
             print(f'{ti_and_inf()} Вы отменили удаление контакта')
             blu.reminder()
             return
@@ -171,7 +206,7 @@ def input_com_contact(name_book, var):
         optional = option_del(name_book, target)
         if optional == 'stop':
             return optional
-        elif optional == 'back':
+        elif optional == 'break':
             print(f'{ti_and_inf()} Вы отменили удаление контакта')
             blu.reminder()
             return
@@ -187,10 +222,14 @@ def input_com_contact(name_book, var):
         reminder()
 
     elif var == 'edit':
+        if not read_cont(name_book):
+            print(f'{ti_and_war()} Список контактов пуст!')
+            reminder()
+            return
         target = input_target()
         if target == 'stop':
             return target
-        elif target == 'back':
+        elif target == 'break':
             print(f'{ti_and_inf()} Вы отменили редактирование контакта')
             blu.reminder()
             return
@@ -201,16 +240,20 @@ def input_com_contact(name_book, var):
         buff = red_contact(name_book, target)
         if buff == 'stop':
             return buff
-        elif buff == 'back':
+        elif buff == 'break':
             print(f'{ti_and_inf()} Вы отменили редактирование контакта')
             blu.reminder()
             return
 
     elif var == 'search':
+        if not read_cont(name_book):
+            print(f'{ti_and_war()} Список контактов пуст!')
+            reminder()
+            return
         buff = ser_contact(name_book)
         if buff == 'stop':
             return buff
-        elif buff == 'back':
+        elif buff == 'break':
             print(f'{ti_and_inf()} Вы отменили поиск контакта')
             blu.reminder()
             return
@@ -222,16 +265,23 @@ def input_com_contact(name_book, var):
         contact_com_info()
 
     elif var == 'convert':
+        if not read_cont(name_book):
+            print(f'{ti_and_war()} Список контактов пуст!')
+            reminder()
+            return
         buff = convert_opt(name_book)
         if buff == 'stop':
             return buff
-        elif buff == 'back':
+        elif buff == 'break':
             print(f'{ti_and_inf()} Вы отменили конвертацию адресной книги')
             blu.reminder()
             return
+        reminder()
 
     elif var == 'book':
+        exists_file_convert()
         os.system(r"explorer.exe Convert Books")
+        reminder()
 
     else:
         print(f'{blu.ti_and_war()} Такой команды не обнаружено')

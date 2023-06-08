@@ -1,5 +1,4 @@
 from bl_upper import *
-from bl_lower import *
 
 
 def main():
@@ -14,5 +13,8 @@ def start():
         name_book = book()
         if not name_book:
             return
-        if not contact(name_book):
+        contact_result = contact(name_book)
+        if not contact_result:
             return
+        elif contact_result == 'change':
+            continue
