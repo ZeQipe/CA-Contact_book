@@ -44,6 +44,7 @@ def book_com_info():
           f'                    list - Вывести список достпуных книг\n'          
           f'                    now  - Создать адресную книгу\n'
           f'                    rem  - Удалить адресную книгу\n'
+          f'                    book - Открыть папку с конвертированными файлами\n'               
           f'                    stop - Завершение работы')
 
 
@@ -55,6 +56,7 @@ def contact_com_info():
           f'                    edit - Редактировать контакт в книге\n'
           f'                    change - Cменить адресную книгу\n'
           f'                    convert - Конвертировать адресную книгу\n'
+          f'                    book - Открыть папку с конвертированными файлами\n'  
           f'                    stop - Завершение работы')
 
 
@@ -114,6 +116,9 @@ def input_com_book(var):
 
     elif var == 'help':
         book_com_info()
+
+    elif var == 'book':
+        os.system(r"explorer.exe Convert Books")
 
     else:
         print(f'{ti_and_war()} Такой команды не обнаружено')
@@ -224,6 +229,9 @@ def input_com_contact(name_book, var):
             print(f'{ti_and_inf()} Вы отменили конвертацию адресной книги')
             blu.reminder()
             return
+
+    elif var == 'book':
+        os.system(r"explorer.exe Convert Books")
 
     else:
         print(f'{blu.ti_and_war()} Такой команды не обнаружено')

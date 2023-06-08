@@ -2,7 +2,6 @@ import bl_upper as blu
 import datetime as dt
 import os
 
-
 """
 Здесь функция для возрата времени.
 """
@@ -54,7 +53,7 @@ def create_book(name):  # Готов
     if not exists_file(name):
         file = open(directions(name), 'a')
         file.close()
-        print(f'{blu.ti_and_inf()} Файл успешно создан!') # уведомим об успехе
+        print(f'{blu.ti_and_inf()} Файл успешно создан!')  # уведомим об успехе
     else:
         print(f'{blu.ti_and_war()} Такая адресная книга уже существует!')
     blu.reminder()
@@ -64,7 +63,7 @@ def create_book(name):  # Готов
 def del_book(name):
     if exists_file(name):
         os.remove(directions(name))
-        print(f'{blu.ti_and_inf()} Файл успешно удалён!') # уведомим об успехе
+        print(f'{blu.ti_and_inf()} Файл успешно удалён!')  # уведомим об успехе
     else:
         print(f'{blu.ti_and_war()} Такой адресной книги не существует!')
         blu.reminder()
@@ -152,7 +151,7 @@ def option_del(name, target):
     check = list(filter(lambda x: target in x, read_cont(name)))
     print(f'{blu.ti_and_inf()} Вот что удалось обнаружить:')
     for i in range(len(check)):
-        print(f'                    {i+1}) {" ".join(check[i])}', end='')
+        print(f'                    {i + 1}) {" ".join(check[i])}', end='')
     print(f'\n{blu.ti_and_inf()} Удалить все вхождения контакта (all) или конкретный (one)? '
           f'back - Отменить удаление')
     while True:
@@ -337,6 +336,7 @@ def opt_red(contact, val):
     return contact
 
 
+# Функция для конвертации адресной книги
 def convert_opt(name):
     print(f'{blu.ti_and_inf()} В какой формат конвертировать файл? (vcf / csv)')
     while True:
@@ -344,16 +344,59 @@ def convert_opt(name):
         if var == 'stop' or var == 'back':
             return var
         elif var == 'vcf':
-            convert_vcf(name)
+            convert_vcf(name, var)
         elif var == 'csv':
-            convert_csv(name)
+            convert_csv(name, var)
         else:
             print(f'{blu.ti_and_war()} Выберите формат vcf или csv, back - отменить конвертацию')
 
 
-def convert_vcf(name):
-    pass
+def directions_convert(name, form):
+    return os.path.join('Convert Books', name + f'.{form}')
 
 
-def convert_csv(name):
-    pass
+def exists_file_convert(name, form):
+    if os.path.exists('Convert Books'):
+        return directions_convert(name, form)
+    else:
+        os.mkdir('Convert Books')
+        return directions_convert(name, form)
+
+
+def convert_vcf(name, form):
+    c_name = exists_file_convert(name, form)
+    lst = read_cont(name)
+    file = open(c_name, 'w')
+    for i in lst:
+        file.write(f'BEGIN:VCARD\nVERSION:3.0\nN:{i[1]};{i[0]};;;\nFN: {i[0]} {i[1]}\nTEL;Type=CELL:{i[2]}'
+                   f'\nEMAIL;Type=WORK:{i[3]}END:VCARD\n')
+    file.close()
+    print(f'{blu.ti_and_inf()} Контактная книга успешно конвертирована!')
+    blu.reminder()
+
+
+def convert_csv(name, form):
+    c_name = exists_file_convert(name, form)
+    lst = read_cont(name)
+    file = open(c_name, 'w', encoding='utf-8')
+    file.write('ИМЯ И ФАМИЛИЯ;НОМЕР ТЕЛЕФОНА;EMAIL АДРЕСС;\n')
+    for i in lst:
+        file.write(f'{i[0]} {i[1]};{i[2]};{i[3]}')
+    file.close()
+    print(f'{blu.ti_and_inf()} Контактная книга успешно конвертирована!')
+    blu.reminder()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
