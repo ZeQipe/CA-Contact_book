@@ -249,8 +249,8 @@ def write_after_del(name, lst):
 # Реализация поиска контакта
 def ser_contact(name):
     while True:
-        print(f'{blu.ti_and_inf()} Введите ИМЯ или ФАМИЛИЮ для поиска контакта\n'
-              f'                    break - Отменить поиск контакта')
+        print(f"{blu.ti_and_inf()} Введите ИМЯ или ФАМИЛИЮ для поиска контакта\n"
+              f"                    break - Отменить поиск контакта")
         target = input(f'{blu.ti_and_you()} >')
         if target == 'stop' or target == 'break':
             return target
@@ -297,7 +297,7 @@ def red_contact(name, target):
     print(f'{blu.ti_and_inf()} Вот что удалось обнаружить:')
     for i in range(len(check)):
         print(f'                    {i + 1}) {" ".join(check[i])}', end='')
-    print(f'{blu.ti_and_inf()} Введите поряковый номер контакта, который необходимо изменить:')
+    print(f'{blu.ti_and_inf()} Введите порядковый номер контакта, который необходимо изменить:')
     while True:
         index_target = input(f'{blu.ti_and_you()} > ')
         if index_target == 'stop' or index_target == 'break':
