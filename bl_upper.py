@@ -52,15 +52,15 @@ def book_com_info():
 
 
 def contact_com_info():
-    print(f'{ti_and_inf()} add - Добавить контакт\n'
-          f'                    del - Удалить контакт\n'
-          f'                    read - Вывести весь список контактов\n'
-          f'                    search - Поиск контакта в книге\n'
-          f'                    edit - Редактировать контакт в книге\n'
-          f'                    change - Cменить адресную книгу\n'
+    print(f'{ti_and_inf()} add     - Добавить контакт\n'
+          f'                    del     - Удалить контакт\n'
+          f'                    read    - Вывести весь список контактов\n'
+          f'                    search  - Поиск контакта в книге\n'
+          f'                    edit    - Редактировать контакт в книге\n'
+          f'                    change  - Cменить адресную книгу\n'
           f'                    convert - Конвертировать адресную книгу\n'
-          f'                    book - Открыть папку с конвертированными файлами\n'  
-          f'                    stop - Завершение работы')
+          f'                    book    - Открыть папку с конвертированными файлами\n'  
+          f'                    stop    - Завершение работы')
 
 
 """
@@ -88,17 +88,27 @@ def input_com_book(var):
         return var
 
     elif var == 'open':
-        print(f'{ti_and_inf()} Введите имя адресной книги:')
-        name = input(f'{ti_and_you()} > ')
-        if name == 'stop':
-            return name
-        elif name == 'break':
-            return
-        buff = open_books(name)
-        if buff == 'stop':
-            return buff
-        elif buff:
-            return name
+        if list_books():
+            print(f'{ti_and_inf()} Введите имя адресной книги:\n'
+                  f'                    break - Отменить открытие адресной книги')
+            name = input(f'{ti_and_you()} > ')
+            if name == 'stop':
+                return name
+            elif name == 'break':
+                print(f'{ti_and_inf()} Вы отменили открытие адресной книги!')
+                reminder()
+                return
+            elif name == '':
+                print(f'{ti_and_inf()} Имя контактной книги не может быть пустым')
+                reminder()
+                return
+            buff = open_books(name)
+            if buff == 'stop':
+                return buff
+            elif buff:
+                return name
+        else:
+            reminder()
 
     elif var == 'now':
         print(f'{ti_and_inf()} Введите имя адресной книги:\n'
@@ -108,6 +118,10 @@ def input_com_book(var):
             return name
         elif name == 'break':
             print(f'{ti_and_inf()} Вы отменили добавление адресной книги!')
+            reminder()
+            return
+        elif name == '':
+            print(f"{ti_and_war()} Вы не ввели имя адресной книги, попробуйте еще раз!")
             reminder()
             return
         else:

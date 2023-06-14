@@ -75,7 +75,7 @@ def del_book(name):
         os.remove(directions(name))
         print(f'{blu.ti_and_inf()} Файл успешно удалён!')  # уведомим об успехе
     else:
-        print(f'{blu.ti_and_war()} Адресная книга, с именем {name}, не обнаружено!')
+        print(f'{blu.ti_and_war()} Адресной книги, с именем {name}, не обнаружено!')
 
 
 # Открытие контактной книги
@@ -394,7 +394,7 @@ def convert_vcf(name, form):
     file = open(directions_convert(name, form), 'w')
     for i in lst:
         file.write(f'BEGIN:VCARD\nVERSION:3.0\nN:{i[1]};{i[0]};;;\nFN: {i[0]} {i[1]}\nTEL;Type=CELL:{i[2]}'
-                   f'\nEMAIL;Type=WORK:{i[3]}END:VCARD\n')
+                   f'\nEMAIL;Type=WORK:{i[3]}\nEND:VCARD\n')
     file.close()
     print(f'{blu.ti_and_inf()} Контактная книга успешно конвертирована!')
 
@@ -406,6 +406,6 @@ def convert_csv(name, form):
     file = open(directions_convert(name, form), 'w', encoding='utf-8')
     file.write('ИМЯ И ФАМИЛИЯ;НОМЕР ТЕЛЕФОНА;EMAIL АДРЕСС;\n')
     for i in lst:
-        file.write(f'{i[0]} {i[1]};{i[2]};{i[3]}')
+        file.write(f'{i[0]} {i[1]};{i[2]};{i[3]};\n')
     file.close()
     print(f'{blu.ti_and_inf()} Контактная книга успешно конвертирована!')
